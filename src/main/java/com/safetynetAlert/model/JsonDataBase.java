@@ -1,143 +1,116 @@
 package com.safetynetAlert.model;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jsoniter.JsonIterator;
-import com.jsoniter.ValueType;
+import com.jsoniter.any.Any;
+
+import jakarta.annotation.PostConstruct;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import java.util.*;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 
 /*
  * Cette classe permet de representer les données du fichier Json
  */
-
-
+@Getter
+@Setter
+@Component
 public class JsonDataBase {
-	
-	private List<Person> persons;
-	private List<FireStation> firestations;
-	private List<MedicalRecord> medicalRecords;
-	
-	
-	public JsonDataBase() {
-		
-		persons = new ArrayList<Person>();
-	}
-	
-	public void perseDataBase(String input) throws Exception {
-	        
-	    
-		 String firstName= null;
-		String lastName = null;
-		String address= null;
-		String city= null;
-		 String zip= null;
-		 String phone= null;
-		 String email= null;
-		
-		
-	    JsonIterator iterator = JsonIterator.parse(input);
 
-	    
-	    
-	    for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
-	    	
-	    	
-	    	if (field.equals("persons")) {
-	           
-	         
-	        	
-	        	
-	        	while (iterator.readArray()) {
-	        		
-	        		
-                    for (String field2 = iterator.readObject(); field2 != null; field2 = iterator.readObject()) {
-                    	switch (field2) {
-	        
-                    	case "firstName":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setFirstName(iterator.readString());
-                    			firstName = iterator.readString();
-                    			
-                    		}
-                    		continue;
-                    	case "lastName":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setLastName(iterator.readString());
-                    			lastName = iterator.readString();
-                    		}
-                    		continue;
-                    	case "address":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setFirstName(iterator.readString());
-                    			address = iterator.readString();
-                    		}
-                    		continue;
-                    	case "city":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setLastName(iterator.readString());
-                    			city = iterator.readString();
-                    		}
-                    		continue;
-                    	case "zip":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setFirstName(iterator.readString());
-                    			zip = iterator.readString();
-                    		}
-                    		continue;
-                    	case "phone":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setLastName(iterator.readString());
-                    			phone = iterator.readString();
-                    		}
-                    		continue;   
-                    	case "email":
-                    		if (iterator.whatIsNext() == ValueType.STRING) {
-                    			//person.setLastName(iterator.readString());
-                    			email = iterator.readString();
-                    		}
-                    		continue;   
-                    	//default:
-                    		//iterator.skip();
-                    	}
-                    }
-                    
-                    Person person = new Person(firstName, lastName, address, city,zip, phone, email);
-                    persons.add(person);
-                    //System.out.println(person.getFirstName());
-	        	}
-	        //default:
-	        //	continue;
-	        	//System.out.println("eeeeeeeeee     " + field);
-        		//iterator.skip();
-	        } else { break;}
-	    }
-	    
-	    
-	  //test d'afficahge
-		
-	    
-	    
-	    
-	    for (Person perso : persons) {
-			
-			System.out.println(perso.getFirstName());
-			System.out.println(perso.getZip());
-			System.out.println(perso.getEmail());
-			System.out.println(perso.getPhone());
-		}
+    final static Logger logger = LogManager.getLogger(JsonDataBase.class);
+    private Data data;
 
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    @Value("${json.file.path}")
+    private String filePath;
+
+    @PostConstruct
+    private void init() {
+        try {
+            loadData();
+        } catch (IOException e) {
+            // Handle the exception appropriately, e.g., log it and rethrow as a runtime exception
+            throw new RuntimeException("Faild to load JSON data", e);
+        }
+
+    }
+
+    /**
+     * Charge les données depuis un fichier JSON spécifié.
+     *
+     *  jsonFilePath Le chemin du fichier JSON.
+     */
+    private void loadData() throws IOException {
+
+        byte[] jsonData = Files.readAllBytes(Paths.get(filePath));
+
+        Any any = JsonIterator.deserialize(jsonData);
+
+
+        // Parse persons
+
+        List<Person> persons = new ArrayList<>();
+        any.get("persons").forEach(person -> persons.add(person.as(Person.class)));
+
+        logger.info("chargement des personnes ..", persons.size());
+
+        // Parse medical records
+        List<MedicalRecord> medicalRecords = new ArrayList<>();
+        any.get("medicalrecords").forEach(medicalRecord -> medicalRecords.add(medicalRecord.as(MedicalRecord.class)));
+
+        // Parse firestations
+        List<FireStation> firestations = new ArrayList<>();
+        any.get("firestations").forEach(firestation -> firestations.add(firestation.as(FireStation.class)));
+
+        // Associer les persones aux stations
+        //firestations.forEach(fireStation -> fireStation.setPersonsByStation(persons.stream().filter(person -> person.getAddress().equalsIgnoreCase(fireStation.getAddress())).collect(Collectors.toList())));
+
+        data = new Data(persons, firestations, medicalRecords);
+
+    }
+
+
+    /**
+     * Sauvegarde les données dans un fichier JSON avec des retours à la ligne pour chaque objet.
+     *
+     * @param data l'objet les données .
+     * @throws IOException Si une erreur survient lors de l'écriture du fichier.
+     */
+    public void saveData(Data data) {
+
+        try{
+            // Création d'une Map pour stocker les données
+            Map<String, Object> dataMap = new HashMap<>();
+            dataMap.put("persons", data.getPersons());
+            dataMap.put("firestations", data.getFirestations());
+            dataMap.put("medicalrecords", data.getMedicalrecords());
+
+            // Création de l'ObjectMapper pour la conversion en JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Configurer l'ObjectMapper pour formater le JSON avec des retours à la ligne
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+            // Écrire les données dans le fichier
+            objectMapper.writeValue(new File(filePath), dataMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
