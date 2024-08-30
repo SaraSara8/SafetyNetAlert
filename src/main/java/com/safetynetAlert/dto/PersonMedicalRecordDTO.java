@@ -9,9 +9,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PersonStationDTO {
+public class PersonMedicalRecordDTO {
 
 
+	
 	private String firstName;
 	private String lastName;
 	private String phone;
@@ -21,8 +22,9 @@ public class PersonStationDTO {
 	
 	
 	
-	public PersonStationDTO(String firstName, String lastName, String phone) {
+	public PersonMedicalRecordDTO(String firstName, String lastName, String phone) {
 		super();
+		
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phone = phone;

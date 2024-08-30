@@ -12,10 +12,11 @@ public class HouseholdStationDTO {
 
     private String firstName;
     private String lastName;
-    private List<String> medications;
-    private List<String> allergies;
     private String phone;
     private int age;
+    private List<String> medications;
+    private List<String> allergies;
+    
 
     public HouseholdStationDTO(String firstName, String lastName,  String phone) {
         super();

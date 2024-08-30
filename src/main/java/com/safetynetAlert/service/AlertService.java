@@ -176,7 +176,7 @@ public class AlertService {
 
         Data data = jsonData.getData();
 
-        List<PersonStationDTO> personsCovered = data.getPersons().stream()
+        List<PersonMedicalRecordDTO> personsCovered = data.getPersons().stream()
                 .filter(person -> person.getAddress().equals(address))
                 .map(personStationDTOMapper)
                 .collect(Collectors.toList());
@@ -188,17 +188,22 @@ public class AlertService {
                 .findFirst()
                 .orElse("");
         // charger l'age et les le medical records
-        for (PersonStationDTO person : personsCovered) {
+        for (PersonMedicalRecordDTO person : personsCovered) {
         	person.setAge(getAge(person.getFirstName(), person.getLastName()));
             MedicalRecord record = data.getMedicalRecordByName(person.getFirstName(), person.getLastName());    
             person.setMedications(record.getMedications());
             person.setAllergies(record.getAllergies());
+    
         }
 
+        PersonStationDTO personStationDTO = new PersonStationDTO();
+        personStationDTO.setPersonMedicalRecordDTOs(personsCovered);
+        personStationDTO.setStation(NumberStation);
+        
+        
         Map<String, Object> result = new HashMap<>();
         if (!personsCovered.isEmpty()) {
-            result.put("station", NumberStation);
-            result.put("persons", personsCovered);
+            result.put("persons", personStationDTO);
         }
         return result;
     }
