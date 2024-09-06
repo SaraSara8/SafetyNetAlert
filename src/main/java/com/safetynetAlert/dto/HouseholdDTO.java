@@ -10,9 +10,9 @@ import java.util.List;
 public class HouseholdDTO {
 
     private String address;
-    private List<HouseholdStationDTO> personsHousehold;
+    private List<PersonMedicalRecordDTO> personsHousehold;
 
-    public HouseholdDTO(String address, List<HouseholdStationDTO> personsHousehold) {
+    public HouseholdDTO(String address, List<PersonMedicalRecordDTO> personsHousehold) {
         this.address = address;
         this.personsHousehold = personsHousehold;
     }

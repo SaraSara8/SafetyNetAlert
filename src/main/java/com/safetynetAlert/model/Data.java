@@ -79,8 +79,11 @@ public class Data {
      * @param lastName le nom de famille de la personne à supprimer.
      * @return true si la personne a été trouvée et supprimée, sinon false.
      */
-    public boolean deletePerson(String firstName, String lastName) {
-        return persons.removeIf(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName));
+    public Person deletePerson(String firstName, String lastName) {
+    	
+    	Person persontoDelete = findPersonByName(firstName, lastName);
+        persons.removeIf(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName));
+        return persontoDelete;
     }
 
     /**

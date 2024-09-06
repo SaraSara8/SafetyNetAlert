@@ -229,13 +229,13 @@ public class AlertService {
         List<HouseholdDTO> households = new ArrayList<>();
 
         for (String address : addresses) {
-
-            List<HouseholdStationDTO> personsCovered = data.getPersons().stream()
+            
+            List<PersonMedicalRecordDTO> personsCovered = data.getPersons().stream()
                     .filter(person -> person.getAddress().equals(address))
-                    .map(householdStationDTOMapper)
+                    .map(personStationDTOMapper)
                     .collect(Collectors.toList());
 
-            for (HouseholdStationDTO person : personsCovered) {
+            for (PersonMedicalRecordDTO person : personsCovered) {
 
                 person.setAge(getAge(person.getFirstName(), person.getLastName()));
                 person.setMedications(data.getMedicalRecordByName(person.getFirstName(), person.getLastName()).getMedications());
@@ -311,11 +311,12 @@ public class AlertService {
      *
      * @param person L'objet personne à ajouter.
      */
-    public void addPerson(Person person) {
+    public Person addPerson(Person person) {
 
         Data data = jsonData.getData();
         data.addPerson(person);
         jsonData.saveData(data);
+        return person;
 
     }
 
@@ -325,10 +326,11 @@ public class AlertService {
      *
      * @param person L'objet personne mis à jour.
      */
-    public void updatePerson(Person person) {
+    public Person updatePerson(Person person) {
         Data data = jsonData.getData();
         data.updatePerson(person);
         jsonData.saveData(data);
+        return person;
     }
 
     /**
@@ -337,11 +339,13 @@ public class AlertService {
      * @param firstName Le prénom de la personne.
      * @param lastName  Le nom de famille de la personne.
      */
-    public void deletePerson(String firstName, String lastName) {
+    public Person deletePerson(String firstName, String lastName) {
         Data data = jsonData.getData();
-        if (data.deletePerson(firstName, lastName)) {
-            jsonData.saveData(data);
-        }
+        Person persondeleted = data.deletePerson(firstName, lastName);
+        jsonData.saveData(data);
+        return persondeleted;
+        
+        
     }
 
 
@@ -450,4 +454,3 @@ public class AlertService {
 
 
 }
-
