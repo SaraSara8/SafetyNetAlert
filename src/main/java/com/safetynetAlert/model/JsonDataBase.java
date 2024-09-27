@@ -1,30 +1,32 @@
 package com.safetynetAlert.model;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.jsoniter.JsonIterator;
+
 import com.jsoniter.any.Any;
+import com.safetynetAlert.Util.FileUtil;
 
 import jakarta.annotation.PostConstruct;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 
 import java.util.*;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /*
  * Cette classe permet de representer les données du fichier Json
+ * @author  Your Name
+ * @version 1.0
  */
 @Getter
 @Setter
@@ -37,14 +39,26 @@ public class JsonDataBase {
     @Value("${json.file.path}")
     private String filePath;
 
+    @Autowired
+    FileUtil fileUtil;
+
+    public JsonDataBase() {
+        
+    }
+
+    /**
+     * Constructeur 
+     */
+    public JsonDataBase(String filePath) {
+        this.filePath = filePath;
+    }
+
+
     @PostConstruct
-    private void init() {
-        try {
+    public void init() {
+        
             loadData();
-        } catch (IOException e) {
-            // Handle the exception appropriately, e.g., log it and rethrow as a runtime exception
-            throw new RuntimeException("Faild to load JSON data", e);
-        }
+        
 
     }
 
@@ -53,11 +67,14 @@ public class JsonDataBase {
      *
      *  jsonFilePath Le chemin du fichier JSON.
      */
-    private void loadData() throws IOException {
+    public void loadData() {
 
-        byte[] jsonData = Files.readAllBytes(Paths.get(filePath));
+        try {
+        // Read all bytes from the JSON file
+        byte[] jsonData = fileUtil.readFile(filePath);
 
-        Any any = JsonIterator.deserialize(jsonData);
+        // Deserialize the JSON data by converting it into an Any object
+         Any any = fileUtil.deserializeFile(jsonData);
 
 
         // Parse persons
@@ -65,20 +82,28 @@ public class JsonDataBase {
         List<Person> persons = new ArrayList<>();
         any.get("persons").forEach(person -> persons.add(person.as(Person.class)));
 
-        logger.info("chargement des personnes ..", persons.size());
+        // Log the number of persons loaded from the JSON data
+        logger.info("chargement des personnes {}..", persons.size());
 
         // Parse medical records
         List<MedicalRecord> medicalRecords = new ArrayList<>();
         any.get("medicalrecords").forEach(medicalRecord -> medicalRecords.add(medicalRecord.as(MedicalRecord.class)));
+        logger.info("chargement des dossiers medicales {}..", medicalRecords.size());
 
         // Parse firestations
         List<FireStation> firestations = new ArrayList<>();
         any.get("firestations").forEach(firestation -> firestations.add(firestation.as(FireStation.class)));
-
+        logger.info("chargement des casernes {}..", firestations.size());
         // Associer les persones aux stations
-        //firestations.forEach(fireStation -> fireStation.setPersonsByStation(persons.stream().filter(person -> person.getAddress().equalsIgnoreCase(fireStation.getAddress())).collect(Collectors.toList())));
-
+       
         data = new Data(persons, firestations, medicalRecords);
+        logger.info("chargement des données dans le fihcier Json");
+        } catch (IOException e) {
+            // Handle the exception appropriately, e.g., log it and rethrow as a runtime exception
+            logger.error("Échec de la lecture des données JSON", e);
+            throw new RuntimeException("Faild to load JSON data", e);
+        }
+
 
     }
 
@@ -93,11 +118,15 @@ public class JsonDataBase {
 
         try{
             // Création d'une Map pour stocker les données
+            logger.info("debut de sauvegarde des données JSON");
             Map<String, Object> dataMap = new HashMap<>();
             dataMap.put("persons", data.getPersons());
             dataMap.put("firestations", data.getFirestations());
             dataMap.put("medicalrecords", data.getMedicalrecords());
 
+
+            fileUtil.writeFile(filePath, dataMap);
+            /* 
             // Création de l'ObjectMapper pour la conversion en JSON
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -106,7 +135,10 @@ public class JsonDataBase {
 
             // Écrire les données dans le fichier
             objectMapper.writeValue(new File(filePath), dataMap);
+            */
+            logger.info("fin de sauvegarde des données JSON");
         } catch (IOException e) {
+            logger.error("Échec de sauvegarde des données JSON", e);
             e.printStackTrace();
         }
     }
