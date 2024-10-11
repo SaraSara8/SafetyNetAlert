@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Gère l'ajout, la mise à jour et la suppression des casernes
  * 
- * @author sarahaimeur
+ * @author SaraHaimeur
  *
  */
 @Service

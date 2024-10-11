@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Gère l'ajout, la mise à jour et la suppression des dossiers médicaux
  * 
- * @author sarahaimeur
+ * @author SaraHaimeur
  *
  */
 @Service

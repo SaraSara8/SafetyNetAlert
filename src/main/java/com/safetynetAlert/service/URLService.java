@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * Gère la logique métier liée aux URLs spécifiques, comme la recherche des personnes
  * courvertes par les casenres ou l'envoi d'alertes
- * @author sarahaimeur
+ * @author SaraHaimeur
  *
  */
 @Service
