@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Le contrôleur REST de l'application de services d'alerte
+ * Le contrôleur REST de l'application de services d'alerte.
  * Gère les requêtes HTTP entrantes pour les opérations CRUD sur les personness
  * @author Equipe de développement
  * @version 1.0

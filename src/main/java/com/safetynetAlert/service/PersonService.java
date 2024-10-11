@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Gère l'ajout, la mise à jour et la suppression des personnes
+ * Gère l'ajout, la mise à jour et la suppression des personnes.
  * 
  * @author SaraHaimeur
  *

@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Gère l'ajout, la mise à jour et la suppression des dossiers médicaux
+ * Gère l'ajout, la mise à jour et la suppression des dossiers médicaux.
  * 
  * @author SaraHaimeur
  *
