@@ -14,6 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
+/**
+ * Le contrôleur REST de l'application de services d'alerte.
+ * Gère les requêtes HTTP entrantes pour les opérations CRUD sur l'objet FireStation 
+ * les caserne de pompiers et les informations de sécurité.
+ * @author Equipe de développement
+ * @version 1.0
+ */
+
 @RestController
 public class FireStationController {
 

@@ -15,6 +15,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Gère l'ajout, la mise à jour et la suppression des dossiers médicaux
+ * 
+ * @author sarahaimeur
+ *
+ */
 @Service
 public class MedicalRecordService {
 

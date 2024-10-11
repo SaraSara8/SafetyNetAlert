@@ -108,7 +108,7 @@ class URLControllerIntegrationTest {
     @Test
     void testGetPhoneNumbersByStation_NotFound() throws Exception {
 
-        // Envoie requette GET : phoneAlert?stationNumber=1
+        // Envoie requette GET : phoneAlert?stationNumber=1111
         mockMvc.perform(get("/phoneAlert")
                 .param("stationNumber", "1111")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -131,7 +131,7 @@ class URLControllerIntegrationTest {
     @Test
     void testGetPersonsByAddress_NotFound() throws Exception {
 
-        // Envoie requette GET : fire?address=1509 Culver St2
+        // Envoie requette GET : fire?address=
         mockMvc.perform(get("/fire")
                 .param("address", "29 rue de Paris")
                 .contentType(MediaType.APPLICATION_JSON))

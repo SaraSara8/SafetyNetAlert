@@ -13,7 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-
+/**
+ * Gère l'ajout, la mise à jour et la suppression des casernes
+ * 
+ * @author sarahaimeur
+ *
+ */
 @Service
 public class FireStationService {
 

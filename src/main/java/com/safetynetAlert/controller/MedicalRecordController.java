@@ -20,8 +20,7 @@ import java.util.Optional;
 
 /**
  * Le contrôleur REST de l'application de services d'alerte.
- * Gère les requêtes HTTP entrantes pour les opérations CRUD sur les personnes, les dossiers médicaux,
- * les caserne de pompiers et les informations de sécurité.
+ * Gère les requêtes HTTP entrantes pour les opérations CRUD sur les dossiers médicauxs
  * @author Equipe de développement
  * @version 1.0
  */

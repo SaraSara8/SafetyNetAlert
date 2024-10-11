@@ -22,6 +22,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+
+/**
+ * Gère la logique métier liée aux URLs spécifiques, comme la recherche des personnes
+ * courvertes par les casenres ou l'envoi d'alertes
+ * @author sarahaimeur
+ *
+ */
 @Service
 public class URLService {
 
@@ -131,7 +139,6 @@ public class URLService {
                 .map(houseHoldDTOMapper)
                 .collect(Collectors.toList());
 
-        logger.info("PhouseHolds : {}", houseHolds.size());
 
         for (HouseholdChildDTO child : houseHolds) {
             List<PersonDTO> familyPersons = data.getPersons().stream()
@@ -201,7 +208,7 @@ public class URLService {
         for (Person person : data.getPersons()) {
 
             if (person.getAddress().equals(address)) {
-                logger.info("la personn est ok");
+            
                 PersonMedicalRecordDTO personMedicalRecordDTO = new PersonMedicalRecordDTO(
                         person.getFirstName(),
                         person.getLastName(),
@@ -272,7 +279,7 @@ public class URLService {
             for (Person person : data.getPersons()) {
 
                 if (person.getAddress().equals(address)) {
-                    logger.info("la personn est ok");
+                    
                     PersonMedicalRecordDTO personMedicalRecordDTO = new PersonMedicalRecordDTO(
                             person.getFirstName(),
                             person.getLastName(),
@@ -320,7 +327,7 @@ public class URLService {
         for (Person person : data.getPersons()) {
 
             if (person.getLastName().equals(lastName)) {
-                logger.info("la personn est ok");
+                
                 PersonInfoDTO personInfoDTO = new PersonInfoDTO(
                         person.getFirstName(),
                         person.getLastName(),
